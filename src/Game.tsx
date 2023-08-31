@@ -5,15 +5,15 @@ import SyntaxHighligther from 'react-syntax-highlighter'
 import { gradientDark } from 'react-syntax-highlighter/dist/cjs/styles/hljs'
 
 const getBackgroundColor = (info: QuestionType, index: number): string => {
-  const { userSelectedAnswer, correctAnswer } = info
+  const { userSelectedAnswer, isCorrectUserAnswer, correctAnswer } = info
 
   if (userSelectedAnswer === null) return 'transparent'
 
   if (correctAnswer !== index && userSelectedAnswer !== index) return 'transparent'
 
-  if (correctAnswer === index) return 'green'
+  if (isCorrectUserAnswer) return 'green'
 
-  if (userSelectedAnswer === index) return 'red'
+  if (userSelectedAnswer !== correctAnswer && userSelectedAnswer === index) return 'red'
 
   return 'transparent'
 }
@@ -21,8 +21,17 @@ const getBackgroundColor = (info: QuestionType, index: number): string => {
 const Question = ({ info }: { info: QuestionType }): any => {
   const selectAnswer = useQuestionStore(state => state.selectAnswer)
 
-  const createHandleClick = (answerIndex: number) => () => {
+  const handleClick = (answerIndex: number) => {
+    // good practice to prevent the user from changing the answer after selecting it (although the answers are disabled)
+    if (info.userSelectedAnswer !== undefined) return
+    // select the answer
     selectAnswer(info.id, answerIndex)
+  }
+
+  const isButtonDisabled = (answerIndex: number): boolean => {
+    if (info.userSelectedAnswer === undefined) return false
+    if (info.userSelectedAnswer === answerIndex) return false // remove this line if you want to disable the selected answer after the user selects it
+    return true
   }
 
   return (
@@ -40,8 +49,8 @@ const Question = ({ info }: { info: QuestionType }): any => {
         {info.answers.map((answer, index) => (
           <ListItem key={index} disablePadding divider>
             <ListItemButton
-              disabled={info.userSelectedAnswer !== null}
-              onClick={createHandleClick(index)}
+              disabled={isButtonDisabled(index)}
+              onClick={() => handleClick(index)}
               sx={{
                 backgroundColor: getBackgroundColor(info, index)
               }}
