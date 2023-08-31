@@ -4,7 +4,7 @@ This template provides a minimal setup to get React working in Vite with HMR and
 
 # Instalations
 
-To start this app execute: 'npm install' in the correct directory
+To start this app execute: 'npm install' in the correct directory and then execute 'npm run dev'
 
 To start an app like this: 
    - npm create vite@latest > React > TS + SWC
