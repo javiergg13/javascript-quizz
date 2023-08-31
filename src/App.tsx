@@ -8,8 +8,6 @@ import { Game } from './Game'
 function App (): any {
   const questions = useQuestionStore(state => state.questions)
 
-  console.log(questions)
-
   return (
     <main>
       <Container maxWidth='sm'>
